@@ -10,5 +10,6 @@
 #define BGFMDB_h
 
 #import "BGBaseModel.h"
+#import "NSDate+BGCategory.h"
 
 #endif /*BGFMDB_h */

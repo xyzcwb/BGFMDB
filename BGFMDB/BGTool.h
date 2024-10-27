@@ -77,8 +77,11 @@ typedef NS_ENUM(NSInteger,bg_getModelInfoType) {//过滤数据类型
  根据类属性类型返回数据库存储类型.
  */
 + (NSString * _Nonnull)getSqlType:(NSString * _Nonnull)type;
-//NSDate转字符串,格式: yyyy-MM-dd HH:mm:ss
-+ (NSString * _Nonnull)stringWithDate:(NSDate * _Nonnull)date;
+
+/**
+ 当前时间
+ */
++ (void)setCurrentDate:(NSDate *_Nonnull)date;
 
 /**
  根据传入的对象获取表名.

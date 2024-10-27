@@ -12,6 +12,7 @@
 #import "BGDB.h"
 #import "NSCache+BGCache.h"
 #import <YYModel/NSObject+YYModel.h>
+#import "NSDate+BGCategory.h"
 
 #define SqlText @"text" //数据库的字符类型
 #define SqlReal @"real" //数据库的浮点类型
@@ -550,16 +551,11 @@ void bg_cleanCache(void) {
     }
     return  [self dataToJson:arrM];
 }
-//NSDate转字符串,格式: yyyy-MM-dd HH:mm:ss
-+ (NSString *)stringWithDate:(NSDate *)date{
-    static dispatch_once_t onceToken;
-    static NSDateFormatter *formatter = nil;
-    dispatch_once(&onceToken, ^{
-        formatter = [NSDateFormatter new];
-        formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.SSS";
-    });
-    return [formatter stringFromDate:date];
+
++ (void)setCurrentDate:(NSDate *)date {
+    [BGDB shareManager].currentDate = date;
 }
+
 //跟value和数据类型type 和编解码标志 返回编码插入数据库的值,或解码数据库的值.
 + (id)getSqlValue:(id)value type:(NSString *)type encode:(BOOL)encode{
     if (!value || [value isKindOfClass:[NSNull class]])return nil;
@@ -622,9 +618,9 @@ void bg_cleanCache(void) {
         }
     } else if (([type hasPrefix:bg_typeHead_NS] || [type hasPrefix:bg_typeHead__NS])&&[type containsString:@"Date"]) {
         if (encode) {
-            return [self stringWithDate:value];
+            return [(NSDate *)value bg_yyyyMMddHHmmssSSSString];
         } else {
-            return [self dateFromString:value];
+            return [NSDate bg_dateFromString:value];
         }
     } else if (([type hasPrefix:bg_typeHead_NS] || [type hasPrefix:bg_typeHead__NS])&&[type containsString:@"URL"]) {
         if (encode) {
@@ -984,18 +980,7 @@ void bg_cleanCache(void) {
     }
     return hashTable;
 }
-//json字符串转NSDate
-+ (NSDate *)dateFromString:(NSString *)jsonString{
-    if (!jsonString || [jsonString isKindOfClass:[NSNull class]])return nil;
-    static dispatch_once_t onceToken;
-    static NSDateFormatter *formatter = nil;
-    dispatch_once(&onceToken, ^{
-        formatter = [NSDateFormatter new];
-        formatter.dateFormat = @"yyyy-MM-dd HH:mm:ss.SSS";
-    });
-    NSDate *date = [formatter dateFromString:jsonString];
-    return date;
-}
+
 //转换从数据库中读取出来的数据.
 + (NSArray *)tansformDataFromSqlDataWithTableName:(NSString *)tableName class:(__unsafe_unretained _Nonnull Class)cla array:(NSArray *)array {
     //如果传入的class为空，则直接以字典的形式返回.
@@ -1057,7 +1042,8 @@ void bg_cleanCache(void) {
             //crateTime和updateTime两个额外字段单独处理.
             if ([propertyName isEqualToString:bg_createTimeKey] ||
                [propertyName isEqualToString:bg_updateTimeKey]) {
-                propertyValue = [BGTool stringWithDate:[NSDate new]];
+                NSDate *date = [BGDB shareManager].currentDate ? : [NSDate date];
+                propertyValue = [date bg_yyyyMMddHHmmssSSSString];
             } else {
                 propertyValue = [object valueForKey:propertyName];
             }

@@ -20,6 +20,11 @@
 @property (nonatomic, assign) BOOL debug;
 
 /**
+ 当前时间
+ */
+@property (nonatomic, strong) NSDate * _Nullable currentDate;
+
+/**
  自定义数据库名称
  */
 @property (nonatomic, copy) NSString * _Nonnull sqliteName;

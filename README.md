@@ -40,72 +40,81 @@ end
 libsqlite3   
 ### 导入头文件   
 ```Objective-C
+
 /**
 只要在自己的类中导入了BGFMDB.h这个头文件,本类就具有了存储功能.
 */
 #import <Foundation/Foundation.h>
 #import "BGFMDB.h"
 @interface stockModel : NSObject
-@property(nonatomic,copy)NSString* name;
-@property(nonatomic,strong)NSNumber* stockData;
-+(instancetype)stockWithName:(NSString*)name stockData:(NSNumber*)stockData;
+@property (nonatomic, copy) NSString *name;
+@property (nonatomic, strong) NSNumber*stockData;
++ (instancetype)stockWithName:(NSString *)name stockData:(NSNumber*)stockData;
 @end
 ```
 ### 主键
 ```Objective-C
+
 /**
 本库自带的自动增长主键.
 */
-@property(nonatomic,strong)NSNumber*_Nullable bg_id;
+@property (nonatomic, strong) NSNumber* _Nullable bg_id;
+
 
 /**
  为了方便开发者，特此加入以下两个字段属性供开发者做参考.(自动记录数据的存入时间和更新时间)
  */
-@property(nonatomic,copy)NSString* _Nonnull bg_createTime;//数据创建时间(即存入数据库的时间)
-@property(nonatomic,copy)NSString* _Nonnull bg_updateTime;//数据最后那次更新的时间.
+@property (nonatomic, copy) NSString * _Nonnull bg_createTime;//数据创建时间(即存入数据库的时间)
+@property (nonatomic, copy) NSString * _Nonnull bg_updateTime;//数据最后那次更新的时间.
+
 
 /**
  自定义表名
  */
-@property(nonatomic,copy)NSString* _Nonnull bg_tableName;
+@property (nonatomic, copy) NSString * _Nonnull bg_tableName;
 ```
 ### 联合主键
 ```Objective-C
+
 /**
  自定义“联合主键” ,这里指定 name和age 为“联合主键”.
  */
-+(NSArray *)bg_unionPrimaryKeys{
++ (NSArray *)bg_unionPrimaryKeys{
     return @[@"name",@"age"];
 }
 ```
 ### 唯一约束
 ```Objective-C
+
 /**
  如果需要指定“唯一约束”字段, 在模型.m文件中实现该函数,这里指定 name和age 为“唯一约束”.
  */
-+(NSArray *)bg_uniqueKeys{
++ (NSArray *)bg_uniqueKeys{
     return @[@"name",@"age"];
 }
 ```
 ### 设置不需要存储的属性
 ```Objective-C
+
 /**
  设置不需要存储的属性, 在模型.m文件中实现该函数.
  */
-+(NSArray *)bg_ignoreKeys{
++ (NSArray *)bg_ignoreKeys{
    return @[@"eye",@"sex",@"num"];
 }
 ```
 ### 初始化对象
 ```Objective-C
-People* p = [self people];
+People*p = [self people];
 ```
 ### 存储
 ```Objective-C
+
 /**
 同步存储.
 */
 [p bg_save];
+
 
 /**
 异步存储.
@@ -114,10 +123,12 @@ People* p = [self people];
        //you code
    }];
    
+
 /**
 覆盖掉原来People类的所有数据,只存储当前对象的数据.
 */
 [p bg_cover];
+
 
 /**
  同步存储或更新.
@@ -126,6 +137,7 @@ People* p = [self people];
  */
  [p bg_saveOrUpdate];
  
+
 /**
 同步 存储或更新 数组元素.
 当"唯一约束"或"主键"存在时，此接口会更新旧数据,没有则存储新数据.
@@ -135,42 +147,49 @@ People* p = [self people];
 ```
 ### 查询
 ```Objective-C
+
 /**
 同步查询所有数据.
 */
-NSArray* finfAlls = [People bg_findAll:bg_tablename];
+NSArray *finfAlls = [People bg_findAll:bg_tablename];
+
 
 /**
 按条件查询.
 */
-NSString* where = [NSString stringWithFormat:@"where %@=%@",bg_sqlKey(@"name"),bg_sqlValue(@"斯巴达")];
-NSArray* arr = [People bg_find:bg_tablename where:where];
+NSString *where = [NSString stringWithFormat:@"where %@=%@",bg_sqlKey(@"name"),bg_sqlValue(@"斯巴达")];
+NSArray *arr = [People bg_find:bg_tablename where:where];
+
 
 /**
  直接写SQL语句操作.
  */
-NSArray* arr = bg_executeSql(@"select * from yy", bg_tablename, [People class]);//查询时,后面两个参数必须要传入.
+NSArray *arr = bg_executeSql(@"select *from yy", bg_tablename, [People class]);//查询时,后面两个参数必须要传入.
+
 
 /**
  根据范围查询.
 */
-NSArray* arr = [People bg_find:bg_tablename range:NSMakeRange(i,50) orderBy:nil desc:NO];
+NSArray *arr = [People bg_find:bg_tablename range:NSMakeRange(i,50) orderBy:nil desc:NO];
 ```
 ### 更新
 ```Objective-C
+
 /**
  单个对象更新.
  支持keyPath.
  */
- NSString* where = [NSString stringWithFormat:@"where %@ or %@=%@",bg_keyPathValues(@[@"user.student.human.body",bg_equal,@"小芳"]),bg_sqlKey(@"age"),bg_sqlValue(@(31))];
+ NSString *where = [NSString stringWithFormat:@"where %@ or %@=%@",bg_keyPathValues(@[@"user.student.human.body",bg_equal,@"小芳"]),bg_sqlKey(@"age"),bg_sqlValue(@(31))];
   [p bg_updateWhere:where];
   
+
 /**
  sql语句批量更新.
  */
-  NSString* where = [NSString stringWithFormat:@"set %@=%@ where %@=%@",bg_sqlKey(@"name"),bg_sqlValue(@"马化腾"),bg_sqlKey(@"name"),bg_sqlValue(@"天朝")];
+  NSString *where = [NSString stringWithFormat:@"set %@=%@ where %@=%@",bg_sqlKey(@"name"),bg_sqlValue(@"马化腾"),bg_sqlKey(@"name"),bg_sqlValue(@"天朝")];
   [People bg_update:bg_tablename where:where];  
   
+
 /**
  直接写SQL语句操作
  */
@@ -178,16 +197,19 @@ bg_executeSql(@"update yy set BG_name='标哥'", nil, nil);//更新或删除等�
 ```
 ### 删除
 ```Objective-C
+
 /**
  按条件删除.
  */
-NSString* where = [NSString stringWithFormat:@"where %@=%@",bg_sqlKey(@"name"),bg_sqlValue(@"斯巴达")];
+NSString *where = [NSString stringWithFormat:@"where %@=%@",bg_sqlKey(@"name"),bg_sqlValue(@"斯巴达")];
 [People bg_delete:bg_tablename where:where];
+
 
 /**
 清除表的所有数据.
 */
 [People bg_clear:bg_tablename];
+
 
 /**
 删除数据库表.
@@ -197,6 +219,7 @@ NSString* where = [NSString stringWithFormat:@"where %@=%@",bg_sqlKey(@"name"),b
 ```
 ### 获取类数据库版本
 ```Objective-C
+
 /**
  获取该类的数据库版本号;
 */
@@ -205,11 +228,13 @@ NSInteger version = [People bg_version:bg_tablename];
 ### 类数据库版本手动升级(当'唯一约束','联合主键','属性类型改变',发生改变时需要手动调用升级,其他情况库自动检测升级)
 ```Objective-C
 //注: 版本号从1开始,依次往后递增,本次更新版本号不得 低于或等于 上次的版本号,否则不会更新.
+
 /**
  如果类'唯一约束','联合主键','属性类型'发生改变.
  则调用此API刷新该类数据库,不需要新旧映射的情况下使用此API.
 */
 [People bg_update:bg_tablename version:version];
+
 
 /**
 如果类'唯一约束','联合主键','属性类型'发生改变.
@@ -219,6 +244,7 @@ NSInteger version = [People bg_version:bg_tablename];
 ```
 ### 事务操作
 ```Objective-C
+
 /**
 事务操作,返回YES提交事务,返回NO则回滚事务.
 */
@@ -229,6 +255,7 @@ bg_inTransaction(^BOOL{
 ```
 ### 快速查询数据条数
 ```Objective-C
+
 /**
 按条件查询表中所有数据的条数.
 */
@@ -236,6 +263,7 @@ NSInteger count = [People bg_count:bg_tablename where:nil];
 ```
 ### 类数据之间的拷贝
 ```Objective-C
+
 /**
  将People表的数据拷贝给bg_tablename表, name拷贝给Man的Man_name，其他同理.
  */
@@ -246,7 +274,7 @@ NSInteger count = [People bg_count:bg_tablename where:nil];
 ```
 ### 直接存取数组
 ```Objective-C
-NSMutableArray* testA = [NSMutableArray array];
+NSMutableArray *testA = [NSMutableArray array];
     [testA addObject:@"我是"];
     [testA addObject:@(10)];
     [testA addObject:@(9.999)];
@@ -269,7 +297,7 @@ NSMutableArray* testA = [NSMutableArray array];
     /**
      查询标识名为testA的数组全部元素.
      */
-    NSArray* testResult = [NSArray bg_arrayWithName:@"testA"];
+    NSArray *testResult = [NSArray bg_arrayWithName:@"testA"];
     
     /**
      获取标识名为testA的数组某个位置上的元素.
@@ -283,7 +311,7 @@ NSMutableArray* testA = [NSMutableArray array];
 ```
 ### 直接存取字典
 ```Objective-C
-NSDictionary* dict = @{@"one":@(1),@"key":@"value",@"array":@[@(1.2),@"哈哈"]};
+NSDictionary *dict = @{@"one":@(1),@"key":@"value",@"array":@[@(1.2),@"哈哈"]};
     /**
      存储字典.
      */
@@ -318,6 +346,7 @@ NSDictionary* dict = @{@"one":@(1),@"key":@"value",@"array":@[@(1.2),@"哈哈"]}
 ```
 ### 注册数据变化监听
 ```Objective-C
+
 /**
 注册监听bg_tablename表的数据变化，唯一识别标识是@"change".  
 */
@@ -342,6 +371,7 @@ NSDictionary* dict = @{@"one":@(1),@"key":@"value",@"array":@[@(1.2),@"哈哈"]}
 ```
 ### 移除数据监听
 ```Objective-C
+
 /**
 移除bg_tablename表数据变化的监听，唯一识别标识是@"change".  
 */
@@ -349,53 +379,60 @@ NSDictionary* dict = @{@"one":@(1),@"key":@"value",@"array":@[@(1.2),@"哈哈"]}
 ```
 ### 字典转模型
 ```Objective-C
-NSDictionary* dictAni = [self getDogDict];
-/**
-一代码搞定字典转模型.
-*/
-Dog* dog = [Dog bg_objectWithKeyValues:dictAni];
+NSDictionary *dictAni = [self getDogDict];
 
-NSDictionary* dictMy = [self getMyDict];
 /**
 一代码搞定字典转模型.
 */
-My* my = [My bg_objectWithDictionary:dictMy];
+Dog*dog = [Dog bg_objectWithKeyValues:dictAni];
+
+NSDictionary *dictMy = [self getMyDict];
+
+/**
+一代码搞定字典转模型.
+*/
+My*my = [My bg_objectWithDictionary:dictMy];
 ```
 ### 模型转字典
 ```Objective-C
+
 /**
 一句代码搞定模型转字典.
 */
- NSDictionary* dictBodyAll = [body bg_keyValuesIgnoredKeys:nil];
+ NSDictionary *dictBodyAll = [body bg_keyValuesIgnoredKeys:nil];
  
+
 /**
 忽略掉hand这个变量不转.
 */
-NSDictionary* dictBody = [body bg_keyValuesIgnoredKeys:@[@"hand"]];
+NSDictionary *dictBody = [body bg_keyValuesIgnoredKeys:@[@"hand"]];
 ```
 ### 如果模型中的数组变量存储的是自定义类,则需要实现下面的这个函数:
 ```Objective-C
+
 /**
 如果模型中有数组且存放的是自定义的类(NSString等系统自带的类型就不必要了),那就实现该函数,key是数组名称,value是自定的类Class,用法跟MJExtension一样.
 (‘字典转模型’ 或 ’模型转字典‘ 都需要实现该函数)
 */
-+(NSDictionary *)bg_objectClassInArray{
++ (NSDictionary *)bg_objectClassInArray{
     return @{@"dogs":[Dog class],@"bodys":[Body class]};
 }
+
 
 /**
  如果模型中有自定义类变量,则实现该函数对应进行集合到模型的转换.
  将json数据中body这个key对应的值转化为Body类变量body对象.
  */
-+(NSDictionary *)bg_objectClassForCustom{
++ (NSDictionary *)bg_objectClassForCustom{
     return @{@"body":[Body class]};
 }
+
 
 /**
  替换变量的功能(及当字典的key和属性名不一样时，进行映射对应起来)
  即将字典里key为descri的值 赋给 属性名为intro的变量,性别和sex同理.
  */
-+(NSDictionary *)bg_replacedKeyFromPropertyName{
++ (NSDictionary *)bg_replacedKeyFromPropertyName{
     return @{@"descri":@"intro",@"性别":@"sex"};
 }
 ```

@@ -20,10 +20,10 @@ s.version      = "2.0.13"
 s.summary      = "完美支持iOS大部分类型数据的存储,同时带有 字典转模型 功能模块."
 
 # This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
+#   *Think: What does it do? Why did you write it? What is the focus?
+#   *Try to keep it short, snappy and to the point.
+#   *Write the description between the DESC delimiters below.
+#   *Finally, don't worry about the indent, CocoaPods strips it!
 s.description  = <<-DESC
 完美支持iOS大部分类型数据的存储,同时带有 字典转模型 功能模块.
 DESC
@@ -91,22 +91,12 @@ s.source       = { :git => 'https://github.com/huangzhibiao/BGFMDB.git', :tag =>
 #  Not including the public_header_files will make all headers public.
 #
 
-s.public_header_files = 'BGFMDB/libs/BG/BGFMDB.h'
-s.source_files = 'BGFMDB/libs/BG/BGFMDB.h'
+s.public_header_files = 'BGFMDB/*.h'
+s.source_files = 'BGFMDB/**/*.{h,m}'
 
 s.subspec 'FMDB' do |ss|
-ss.source_files = 'BGFMDB/libs/FMDB/*.{h,m}'
+ss.source_files = 'BGFMDB/FMDB/*.{h,m}'
 end
-
-s.subspec 'BG' do |ss|
-ss.source_files = 'BGFMDB/libs/BG/*.{h,m}'
-ss.dependency 'BGFMDB/FMDB'
-end
-
-#s.source_files  = 'BGFMDB/libs/BG/*.{h,m}', 'BGFMDB/libs/FMDB/*.{h,m}'
-#s.exclude_files = "BGFMDB/BGFMDB/libs"
-
-#s.public_header_files = "BGFMDB/BGFMDB/libs/FMDB/FMDB.h"
 
 
 # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #

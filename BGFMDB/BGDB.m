@@ -689,7 +689,17 @@ static BGDB*BGdb = nil;
                     if ([tempDict.allKeys containsObject:bg_id]) {
                         //更新操作
                         id primaryKeyVlaue = tempDict[bg_id];
-                        [where appendFormat:@" where %@=%@", bg_id, bg_sqlValue(primaryKeyVlaue)];
+                        NSString *dataCountSql = [NSString stringWithFormat:@"select count(*) from %@ where %@=%@", tablename, bg_id, bg_sqlValue(primaryKeyVlaue)];
+                        __block NSInteger dataCount = 0;
+                        [db executeStatements:dataCountSql withResultBlock:^int(NSDictionary *resultsDictionary) {
+                            dataCount = [[resultsDictionary.allValues lastObject] integerValue];
+                            return 0;
+                        }];
+                        if (dataCount > 0) {
+                            [where appendFormat:@" where %@=%@", bg_id, bg_sqlValue(primaryKeyVlaue)];
+                        } else {
+                            isSave = YES;
+                        }
                     } else {
                         //插入操作
                         isSave = YES;
@@ -699,7 +709,9 @@ static BGDB*BGdb = nil;
                 NSMutableString *SQL = [[NSMutableString alloc] init];
                 NSMutableArray *arguments = [NSMutableArray array];
                 if (isSave) {//存储操作
-                    [tempDict setValue:[self getMainKeyVaule] forKey:bg_id];
+                    if (tempDict[bg_id] == nil) {
+                        [tempDict setValue:[self getMainKeyVaule] forKey:bg_id];
+                    }
                     [SQL appendFormat:@"insert into %@(",tablename];
                     NSArray *keys = tempDict.allKeys;
                     NSArray *values = tempDict.allValues;

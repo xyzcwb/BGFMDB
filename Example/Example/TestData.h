@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger tid;
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, strong) NSArray *list;
+@property (nonatomic, strong) NSArray *strings;
 
 @end
 

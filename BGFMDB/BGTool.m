@@ -13,6 +13,7 @@
 #import "NSCache+BGCache.h"
 #import <YYModel/NSObject+YYModel.h>
 #import "NSDate+BGCategory.h"
+#import "BGBaseModel.h"
 
 #define SqlText @"text" //数据库的字符类型
 #define SqlReal @"real" //数据库的浮点类型
@@ -170,7 +171,7 @@ void bg_cleanCache(void) {
 /**
  字典转json字符 .
  */
-+ (NSString *)dataToJson:(id)data{
++ (NSString *)dataToJson:(id)data {
     NSAssert(data,@"数据不能为空!");
     NSError *parseError = nil;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:data options:NSJSONWritingPrettyPrinted error:&parseError];
@@ -268,9 +269,11 @@ void bg_cleanCache(void) {
             if (!onlyKey) {
                 //获取成员变量的数据类型
                 NSString *type = [NSString stringWithUTF8String:ivar_getTypeEncoding(thisIvar)];
-                key = [NSString stringWithFormat:@"%@*%@",key,type];
+                key = [NSString stringWithFormat:@"%@*%@", key, type];
             }
-            [keys addObject:key];//存储对象的变量名
+            if (![keys containsObject:key]) {
+                [keys addObject:key];//存储对象的变量名
+            }
         }
         free(vars);//释放资源
     }];
@@ -481,7 +484,7 @@ void bg_cleanCache(void) {
     
 }
 //NSArray,NSSet转json字符
-+ (NSString *)jsonStringWithArray:(id)array{
++ (NSString *)jsonStringWithArray:(id)array {
     if ([NSJSONSerialization isValidJSONObject:array]) {
         return [self dataToJson:array];
     } else {
@@ -990,6 +993,26 @@ void bg_cleanCache(void) {
     NSString *json = [array yy_modelToJSONString];
     json = [json stringByReplacingOccurrencesOfString:@"\"BG_" withString:@"\""];
     NSArray *models = [NSArray yy_modelArrayWithClass:cla json:json];
+    if (![[models.firstObject class] respondsToSelector:@selector(bg_objectClassInArray)]) {
+        return models;
+    }
+    NSAssert(array.count == models.count, @"数据长度不一致了！！！");
+    for (int i = 0; i < array.count; i++) {
+        NSDictionary *dict = array[i];
+        BGBaseModel *model = models[i];
+        if ([[model class] respondsToSelector:@selector(bg_objectClassInArray)]) {
+            [[[model class] bg_objectClassInArray] enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, Class  _Nonnull obj, BOOL * _Nonnull stop) {
+                NSString *jsonString = dict[bg_sqlKey(key)];
+                if ([jsonString isKindOfClass:[NSString class]]) {
+                    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+                    NSArray *value = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:NULL];
+                    if ([value isKindOfClass:[NSArray class]]) {
+                        [model setValue:value forKey:key];
+                    }
+                }
+            }];
+        }
+    }
     return models;
 }
 

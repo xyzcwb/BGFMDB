@@ -26,7 +26,9 @@
 //        NSArray *ret = [TestData bg_find:nil where:[NSString stringWithFormat:@"where %@ in (%@)", bg_sqlKey(@"name"), [array componentsJoinedByString:@", "]]];
 //        NSLog(@"%@", ret);
 //        
-        NSArray *list = [TestData bg_find:nil where:[NSString stringWithFormat:@"where exists (select 1 from json_each(TestData.%@) where json_each.value = '%@')", bg_sqlKey(@"strings"), @"2"]];
+//        NSArray *list = [TestData bg_find:nil where:[NSString stringWithFormat:@"where exists (select 1 from json_each(%@.%@) where json_each.value = '%@')", NSStringFromClass([TestData class]), bg_sqlKey(@"strings"), @"65B18C13-7897-432B-8D04-F0218574A2CA"]];
+        
+        NSArray *list = [TestData bg_find:nil where:[NSString stringWithFormat:@"where %@ like '%%%@%%' ", bg_sqlKey(@"strings"), @"65B18C13-7897-432B-8D04-F0218574A2CA"]];
         NSLog(@"%@", list);
         
 //        NSMutableArray *datas = [[NSMutableArray alloc] init];
@@ -37,7 +39,7 @@
 //            NSMutableArray *array1 = [[NSMutableArray alloc] init];
 //            for (int j = 0; j < random() % 4 + 1; j++) {
 //                [array addObject:@(j)];
-//                [array1 addObject:@(j).stringValue];
+//                [array1 addObject:[[NSUUID UUID] UUIDString]];
 //            }
 //            data.strings = array1;
 ////            data.bg_id = @(random() % 20);

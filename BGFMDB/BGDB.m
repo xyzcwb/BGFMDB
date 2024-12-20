@@ -132,6 +132,7 @@ static BGDB*BGdb = nil;
         //self.threadLock = [[NSRecursiveLock alloc] init];
         //创建信号量.
         self.semaphore = dispatch_semaphore_create(1);
+        self.currentDate = [NSDate date];
     }
     return self;
 }
@@ -1963,7 +1964,7 @@ static BGDB*BGdb = nil;
  @tablename 要操作的表名.
  @cla 要操作的类.
  */
-- (id _Nullable)bg_executeSql:(NSString * const _Nonnull)sql tablename:(NSString * _Nonnull)tablename class:(__unsafe_unretained _Nonnull Class)cla{
+- (id _Nullable)bg_executeSql:(NSString * const _Nonnull)sql tablename:(NSString * _Nonnull)tablename class:(nullable Class)cla{
     NSAssert(sql,@"sql语句不能为空!");
     dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
     __block id result;

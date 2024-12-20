@@ -293,7 +293,7 @@
  @tablename 要操作的表名.
  @cla 要操作的类.
  */
-- (id _Nullable)bg_executeSql:(NSString * const _Nonnull)sql tablename:(NSString * _Nonnull)tablename class:(__unsafe_unretained _Nonnull Class)cla;
+- (id _Nullable)bg_executeSql:(NSString * const _Nonnull)sql tablename:(NSString * _Nonnull)tablename class:(nullable Class)cla;
 #pragma mark 存储数组.
 
 /**

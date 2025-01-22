@@ -464,7 +464,7 @@ static BGDB*BGdb = nil;
     __block BOOL result;
     [self executeDB:^(FMDatabase * _Nonnull db) {
         NSArray *keys = dict.allKeys;
-        if ([keys containsObject:bg_sqlKey(bg_primaryKey)]) {
+        if (![keys containsObject:bg_sqlKey(bg_primaryKey)]) {
             [dict setValue:[self getMainKeyVaule] forKey:bg_sqlKey(bg_primaryKey)];
         }
         NSArray *values = dict.allValues;

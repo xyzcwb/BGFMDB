@@ -11,7 +11,7 @@
 #import "BGTool.h"
 #import "BGDB.h"
 #import "NSCache+BGCache.h"
-#import <YYModel/NSObject+YYModel.h>
+#import <YYKit/NSObject+YYModel.h>
 #import "NSDate+BGCategory.h"
 #import "BGBaseModel.h"
 
@@ -990,9 +990,9 @@ void bg_cleanCache(void) {
     if (cla == nil) {
         return array;
     }
-    NSString *json = [array yy_modelToJSONString];
+    NSString *json = [array modelToJSONString];
     json = [json stringByReplacingOccurrencesOfString:@"\"BG_" withString:@"\""];
-    NSArray *models = [NSArray yy_modelArrayWithClass:cla json:json];
+    NSArray *models = [NSArray modelArrayWithClass:cla json:json];
     if (![[models.firstObject class] respondsToSelector:@selector(bg_objectClassInArray)]) {
         return models;
     }
